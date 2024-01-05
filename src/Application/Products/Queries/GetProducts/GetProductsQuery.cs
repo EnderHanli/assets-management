@@ -1,12 +1,8 @@
 ﻿using Application.Common.Messaging;
+using Application.Common.Models;
 
 namespace Application.Products.Queries.GetProducts
 {
-    public sealed record GetProductsQuery(
-        string? SearchTerm,
-        string? SortColumn,
-        string? SortOrder,
-        int PageIndex = 1,
-        int PageSize = 10)
-        : IQuery<List<ProductsResponse>>;
+    public sealed record GetProductsQuery(LoadOptions LoadOptions)
+        : IQuery<PagedList<ProductsResponse>>;
 }

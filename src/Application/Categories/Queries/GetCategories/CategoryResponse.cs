@@ -1,11 +1,9 @@
-﻿using Domain.Enums;
-
-namespace Application.Categories.Queries.GetCategories
+﻿namespace Application.Categories.Queries.GetCategories
 {
     public sealed record CategoryResponse(
         int Id,
         string Name,
-        CategoryType Type,
+        string Type,
         bool SendEmailNotification,
         int Quantity);
 }

@@ -17,7 +17,12 @@ namespace Application.Categories.Commands.DeleteCategory
             var category = await _context.Categories.FindAsync(new object[] { request.Id }, cancellationToken);
             if (category is null || category.IsDeleted)
             {
-                return Result.Failure(AssetErrors.NotFound);
+                return Result.Failure(AssetErrors.CategoryNotFound);
+            }
+
+            if (category.Quantity > 0)
+            {
+                return Result.Failure(AssetErrors.CategoryCurrentlyUsed);
             }
 
             _context.Categories.Remove(category);

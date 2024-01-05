@@ -20,7 +20,7 @@ namespace Application.Products.Commands.UpdateProduct
                 return Result.Failure(AssetErrors.ProductNotFound);
             }
 
-            var category = await _context.Categories.FindAsync(new object[] { request.Id }, cancellationToken);
+            var category = await _context.Categories.FindAsync(new object[] { request.CategoryId }, cancellationToken);
             if (category == null || category.IsDeleted)
             {
                 return Result.Failure(AssetErrors.CategoryNotFound);
@@ -39,12 +39,14 @@ namespace Application.Products.Commands.UpdateProduct
 
             product.PurchaseCost = request.PurchaseCost;
             product.IsArchived = request.IsArchived;
-            product.CategoryId = request.CategoryId;
+            product.CategoryId = category.Id;
             product.ModelNo = request.ModelNo;
             product.Name = request.Name;
             product.Notes = request.Notes;
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
     }
 }

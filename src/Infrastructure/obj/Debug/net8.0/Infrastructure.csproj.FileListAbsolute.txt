@@ -36,3 +36,4 @@ C:\Users\hanli\source\repos\assets-management\src\Infrastructure\obj\Debug\net8.
 C:\Users\hanli\source\repos\assets-management\src\Infrastructure\obj\Debug\net8.0\Infrastructure.pdb
 C:\Users\hanli\source\repos\assets-management\src\Infrastructure\obj\Debug\net8.0\Infrastructure.genruntimeconfig.cache
 C:\Users\hanli\source\repos\assets-management\src\Infrastructure\obj\Debug\net8.0\ref\Infrastructure.dll
+C:\Users\hanli\source\repos\assets-management\src\Infrastructure\obj\Debug\net8.0\Infrastructure.sourcelink.json

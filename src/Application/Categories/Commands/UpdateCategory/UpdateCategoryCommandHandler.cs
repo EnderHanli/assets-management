@@ -17,11 +17,11 @@ namespace Application.Categories.Commands.UpdateCategory
             var category = await _context.Categories.FindAsync(new object[] { request.Id }, cancellationToken);
             if (category is null || category.IsDeleted)
             {
-                return Result.Failure(AssetErrors.NotFound);
+                return Result.Failure(AssetErrors.CategoryNotFound);
             }
 
             category.Name = request.Name;
-            category.CategoryType = request.CategoryType;
+            category.CategoryTypeId = request.CategoryTypeId;
             category.Notes = request.Notes;
             category.SendEmailNotification = request.SendEmailNotification;
 

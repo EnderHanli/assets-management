@@ -1,12 +1,12 @@
 ﻿using Domain.Common;
-using Domain.Enums;
 
 namespace Domain.Entities
 {
     public class Category : FullAuditableEntity
     {
         public string Name { get; set; } = string.Empty;
-        public CategoryType CategoryType { get; set; }
+        public int CategoryTypeId { get; set; }
+        public CategoryType CategoryType { get; set; } = null!;
         public string? Notes { get; set; }
         public bool SendEmailNotification { get; set; }
         public int Quantity { get; set; } = 0;

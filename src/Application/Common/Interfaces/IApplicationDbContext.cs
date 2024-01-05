@@ -13,9 +13,13 @@ namespace Application.Common.Interfaces
         DbSet<Asset> Assets { get; }
         DbSet<Component> Components { get; }
         DbSet<Consumable> Consumables { get; }
-        DbSet<Employee> Employees { get; }
         DbSet<License> Licenses { get; }
+        DbSet<Employee> Employees { get; }
+        DbSet<Department> Departments { get; }
         DbSet<Manufacturer> Manufacturers { get; }
+        DbSet<CategoryType> CategoryTypes { get; }
+        DbSet<StatusType> StatusTypes { get; }
+        DbSet<ControlTimeType> ControlTimeTypes { get; }
 
         DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

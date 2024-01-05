@@ -28,3 +28,4 @@ C:\Users\hanli\source\repos\assets-management\src\Application\obj\Debug\net8.0\A
 C:\Users\hanli\source\repos\assets-management\src\Application\obj\Debug\net8.0\refint\Application.dll
 C:\Users\hanli\source\repos\assets-management\src\Application\obj\Debug\net8.0\Application.pdb
 C:\Users\hanli\source\repos\assets-management\src\Application\obj\Debug\net8.0\ref\Application.dll
+C:\Users\hanli\source\repos\assets-management\src\Application\obj\Debug\net8.0\Application.sourcelink.json

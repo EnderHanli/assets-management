@@ -18,7 +18,7 @@ namespace Application.Categories.Commands.CreateCategory
             var category = new Category
             {
                 Name = request.Name,
-                CategoryType = request.CategoryType,
+                CategoryTypeId = request.CategoryTypeId,
                 Notes = request.Notes,
                 SendEmailNotification = request.SendEmailNotification,
                 Quantity = 0

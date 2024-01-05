@@ -2,6 +2,7 @@
 using Application.Categories.Commands.DeleteCategory;
 using Application.Categories.Commands.UpdateCategory;
 using Application.Categories.Queries.GetCategories;
+using Application.Common.Models;
 using Carter;
 using MediatR;
 
@@ -11,62 +12,61 @@ namespace Api.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            var categories = app.MapGroup("api/categories");
+            var builder = app.MapGroup("api/categories");
 
-            categories.MapGet("/", async (
-                ISender sender,
-                string? searchTerm,
-                string? sortColumn,
-                string? sortOrder,
-                int pageNumber = 1,
-                int pageSize = 10) =>
+            builder.MapGet("", GetCategories);
+            builder.MapPost("", CreateCategory);
+            builder.MapPut("{id:int}", UpdateCategory);
+            builder.MapDelete("{id:int}", DeleteCategory);
+        }
+
+        public async Task<IResult> GetCategories(ISender sender, [AsParameters] LoadOptions loadOptions)
+        {
+            var result = await sender.Send(new GetCategoriesQuery(loadOptions));
+            if (!result.Succeeded)
             {
-                return Results.Ok(await sender.Send(new GetCategoriesQuery(searchTerm, sortColumn, sortOrder, pageNumber, pageSize)));
-            });
+                return TypedResults.BadRequest(result.Error);
+            }
 
-            categories.MapGet("/{id:int}", (int id, ISender sender) =>
+            return TypedResults.Ok(result.Value);
+        }
+
+        public async Task<IResult> CreateCategory(ISender sender, CreateCategoryCommand command)
+        {
+            var result = await sender.Send(command);
+            if (!result.Succeeded)
             {
-                return Results.Ok();
-            });
+                return TypedResults.BadRequest(result.Error);
+            }
 
-            categories.MapPost("/", async (CreateCategoryCommand command, ISender sender) =>
+            return TypedResults.Ok(result.Value);
+        }
+
+        public async Task<IResult> UpdateCategory(ISender sender, int id, UpdateCategoryCommand command)
+        {
+            if (id != command.Id)
             {
-                var result = await sender.Send(command);
-                if (!result.Succeeded)
-                {
-                    return Results.BadRequest(result.Error);
-                }
+                return TypedResults.BadRequest();
+            }
 
-                return Results.Ok(result.Value);
-            });
-
-            categories.MapPut("/{id:int}", async (int id, UpdateCategoryCommand command, ISender sender) =>
+            var result = await sender.Send(command);
+            if (!result.Succeeded)
             {
-                if (id != command.Id)
-                {
-                    return Results.BadRequest();
-                }
+                return TypedResults.BadRequest(result.Error);
+            }
 
-                var result = await sender.Send(command);
-                if (!result.Succeeded)
-                {
-                    return Results.BadRequest(result.Error);
-                }
+            return TypedResults.NoContent();
+        }
 
-                return Results.NoContent();
-            });
-
-            categories.MapDelete("/{id:int}", async (int id, ISender sender) =>
+        public async Task<IResult> DeleteCategory(ISender sender, int id)
+        {
+            var result = await sender.Send(new DeleteCategoryCommand(id));
+            if (!result.Succeeded)
             {
-                var command = new DeleteCategoryCommand(id);
-                var result = await sender.Send(command);
-                if (!result.Succeeded)
-                {
-                    return Results.BadRequest(result.Error);
-                }
+                return TypedResults.BadRequest(result.Error);
+            }
 
-                return Results.NoContent();
-            });
+            return TypedResults.NoContent();
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace Application.Categories.Queries.GetCategories
 {
-    internal sealed class GetCategoriesQueryHandler : IQueryHandler<GetCategoriesQuery, List<CategoryResponse>>
+    internal sealed class GetCategoriesQueryHandler : IQueryHandler<GetCategoriesQuery, PagedList<CategoryResponse>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -16,19 +16,20 @@ namespace Application.Categories.Queries.GetCategories
             _context = context;
         }
 
-        public async Task<Result<List<CategoryResponse>>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
+        public async Task<Result<PagedList<CategoryResponse>>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
         {
-            IQueryable<Category> categoriesQuery = _context.Categories;
+            IQueryable<Category> categoriesQuery = _context.Categories
+                .Include(p => p.CategoryType);
 
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            if (!string.IsNullOrWhiteSpace(request.LoadOptions.SearchTerm))
             {
                 categoriesQuery = categoriesQuery.Where(p =>
-                    p.Name.Contains(request.SearchTerm) ||
-                    p.CategoryType.ToString().Contains(request.SearchTerm) ||
-                    p.Quantity.ToString().Contains(request.SearchTerm));
+                    p.Name.Contains(request.LoadOptions.SearchTerm) ||
+                    p.CategoryType.Name.Contains(request.LoadOptions.SearchTerm) ||
+                    p.Quantity.ToString().Contains(request.LoadOptions.SearchTerm));
             }
 
-            if (request.SortOrder?.ToLower() == "desc")
+            if (request.LoadOptions.SortOrder?.ToLower() == "desc")
             {
                 categoriesQuery = categoriesQuery.OrderByDescending(GetSortProperty(request));
             }
@@ -37,23 +38,24 @@ namespace Application.Categories.Queries.GetCategories
                 categoriesQuery = categoriesQuery.OrderBy(GetSortProperty(request));
             }
 
-            var categories = await categoriesQuery
+            var categories = categoriesQuery
                 .Select(p =>
                     new CategoryResponse(
                         p.Id,
                         p.Name,
-                        p.CategoryType,
+                        p.CategoryType.Name,
                         p.SendEmailNotification,
-                        p.Quantity)
-                ).ToListAsync(cancellationToken);
+                        p.Quantity));
 
-            return categories;
+            var pagedCategories = await PagedList<CategoryResponse>.CreateAsync(categories, request.LoadOptions.PageNumber, request.LoadOptions.PageSize);
+
+            return pagedCategories;
         }
 
-        private static Expression<Func<Category, object>> GetSortProperty(GetCategoriesQuery request) => request.SortColumn?.ToLower() switch
+        private static Expression<Func<Category, object>> GetSortProperty(GetCategoriesQuery request) => request.LoadOptions.SortColumn?.ToLower() switch
         {
             "name" => category => category.Name,
-            "type" => category => (int)category.CategoryType,
+            "type" => category => category.CategoryType.Name,
             "quantity" => category => category.Quantity,
             _ => category => category.Id
         };

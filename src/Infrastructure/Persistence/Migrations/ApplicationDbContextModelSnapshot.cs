@@ -141,7 +141,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("PurchaseDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("ScheduleControlTime")
+                    b.Property<int?>("ScheduleControlTimeId")
                         .HasColumnType("integer");
 
                     b.Property<string>("SerialNumber")
@@ -159,6 +159,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("ProductId");
 
+                    b.HasIndex("ScheduleControlTimeId");
+
                     b.HasIndex("StatusId");
 
                     b.ToTable("Assets");
@@ -172,7 +174,7 @@ namespace Infrastructure.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryType")
+                    b.Property<int>("CategoryTypeId")
                         .HasColumnType("integer");
 
                     b.Property<string>("CreatedBy")
@@ -211,7 +213,24 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryTypeId");
+
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CategoryType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CategoryTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Component", b =>
@@ -350,6 +369,21 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Consumables");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ControlTimeType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ControlTimeTypes");
+                });
+
             modelBuilder.Entity("Domain.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -367,7 +401,7 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Department");
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("Domain.Entities.Employee", b =>
@@ -604,6 +638,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("text");
 
@@ -617,12 +654,29 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
-                    b.Property<int>("StatusType")
+                    b.Property<int>("StatusTypeId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("StatusTypeId");
+
                     b.ToTable("Statuses");
+                });
+
+            modelBuilder.Entity("Domain.Entities.StatusType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StatusTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Accessory", b =>
@@ -660,8 +714,12 @@ namespace Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Status", "Status")
+                    b.HasOne("Domain.Entities.ControlTimeType", "ScheduleControlTime")
                         .WithMany()
+                        .HasForeignKey("ScheduleControlTimeId");
+
+                    b.HasOne("Domain.Entities.Status", "Status")
+                        .WithMany("Assets")
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -670,7 +728,20 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Navigation("Product");
 
+                    b.Navigation("ScheduleControlTime");
+
                     b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Category", b =>
+                {
+                    b.HasOne("Domain.Entities.CategoryType", "CategoryType")
+                        .WithMany()
+                        .HasForeignKey("CategoryTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CategoryType");
                 });
 
             modelBuilder.Entity("Domain.Entities.Component", b =>
@@ -759,6 +830,17 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Manufacturer");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Status", b =>
+                {
+                    b.HasOne("Domain.Entities.StatusType", "StatusType")
+                        .WithMany()
+                        .HasForeignKey("StatusTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StatusType");
+                });
+
             modelBuilder.Entity("Domain.Entities.Category", b =>
                 {
                     b.Navigation("Accessories");
@@ -773,6 +855,11 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
+                {
+                    b.Navigation("Assets");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Status", b =>
                 {
                     b.Navigation("Assets");
                 });

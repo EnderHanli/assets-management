@@ -1,17 +1,19 @@
-﻿using Infrastructure.Persistence;
+﻿using Api.Infrastructure;
+using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Extensions
 {
     public static class ApplicationBuilderExtensions
     {
-        public static void ApplyMigrations(this IApplicationBuilder app)
+        public static async void ApplyMigrations(this IApplicationBuilder app)
         {
             using var scope = app.ApplicationServices.CreateScope();
 
             using var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            context.Database.Migrate();
+            await context.Database.MigrateAsync();
+            await context.SeedAsync();
         }
     }
 }

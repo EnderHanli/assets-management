@@ -17,10 +17,10 @@ namespace Application.Products.Commands.CreateProduct
         public async Task<Result<int>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
             var category = await _context.Categories
-                .SingleOrDefaultAsync(p => p.Id == request.CategoryId);
+                .SingleOrDefaultAsync(p => p.Id == request.CategoryId, cancellationToken: cancellationToken);
             if (category is null || category.IsDeleted)
             {
-                return Result.Failure<int>(AssetErrors.NotFound);
+                return Result.Failure<int>(AssetErrors.CategoryNotFound);
             }
 
             var product = new Product

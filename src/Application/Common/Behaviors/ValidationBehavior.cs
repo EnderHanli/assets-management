@@ -27,19 +27,16 @@ namespace Application.Common.Behaviors
 
                 var validationResults = await Task.WhenAll(
                    _validators
-                        .Select(validator => validator.ValidateAsync(context)));
+                        .Select(validator => validator.ValidateAsync(context, cancellationToken)));
 
-                var failures = validationResults
-                    .Where(failure => failure.Errors.Any())
-                    .SelectMany(validationFailure => validationFailure.Errors);
-
-
-                if (failures.Any())
-                {
-                    var validationErrors = failures
-                        .Select(failure => new ValidationError(failure.PropertyName, failure.ErrorMessage))
+                var validationErrors = validationResults
+                    .Where(validationResult => validationResult.Errors.Any())
+                    .SelectMany(validationResult => validationResult.Errors)
+                    .Select(validationFailure => new ValidationError(validationFailure.PropertyName, validationFailure.ErrorMessage))
                         .ToList();
 
+                if (validationErrors.Any())
+                {
                     throw new Exceptions.ValidationException(validationErrors);
                 }
             }

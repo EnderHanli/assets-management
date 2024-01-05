@@ -1,5 +1,4 @@
 ﻿using Domain.Common;
-using Domain.Enums;
 
 namespace Domain.Entities
 {
@@ -7,9 +6,9 @@ namespace Domain.Entities
     {
         public string Code { get; set; } = string.Empty;
         public int ProductId { get; set; }
-        public Product Product { get; set; } = new();
+        public Product Product { get; set; } = null!;
         public int StatusId { get; set; }
-        public Status Status { get; set; } = new();
+        public Status Status { get; set; } = null!;
         public int? DepartmentId { get; set; }
         public Department? Department { get; set; }
         public string? Name { get; set; }
@@ -17,6 +16,7 @@ namespace Domain.Entities
         public DateTime? WarrantyExpirationDate { get; set; }
         public DateTime? PurchaseDate { get; set; }
         public decimal? PurchaseCost { get; set; }
+        public int? ScheduleControlTimeId { get; set; }
         public ControlTimeType? ScheduleControlTime { get; set; }
         public string? Notes { get; set; }
     }

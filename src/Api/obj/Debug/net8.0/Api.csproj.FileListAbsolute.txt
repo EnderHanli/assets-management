@@ -228,3 +228,4 @@ C:\Users\hanli\source\repos\assets-management\src\Api\obj\Debug\net8.0\refint\Ap
 C:\Users\hanli\source\repos\assets-management\src\Api\obj\Debug\net8.0\Api.pdb
 C:\Users\hanli\source\repos\assets-management\src\Api\obj\Debug\net8.0\Api.genruntimeconfig.cache
 C:\Users\hanli\source\repos\assets-management\src\Api\obj\Debug\net8.0\ref\Api.dll
+C:\Users\hanli\source\repos\assets-management\src\Api\obj\Debug\net8.0\Api.sourcelink.json

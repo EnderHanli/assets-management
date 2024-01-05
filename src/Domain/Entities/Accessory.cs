@@ -6,7 +6,7 @@ namespace Domain.Entities
     {
         public string Name { get; set; } = string.Empty;
         public int CategoryId { get; set; }
-        public Category Category { get; set; } = new();
+        public Category Category { get; set; } = null!;
         public int? ManufacturerId { get; set; }
         public Manufacturer? Manufacturer { get; set; }
         public int? DepartmentId { get; set; }
